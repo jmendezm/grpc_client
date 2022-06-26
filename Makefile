@@ -7,6 +7,6 @@ SP = 4
 
 DEPS = grpc_lib http2_client
 dep_grpc_lib = git https://github.com/Bluehouse-Technology/grpc_lib
-dep_http2_client = git https://github.com/Bluehouse-Technology/http2_client
+http2_client = git https://github.com/Bluehouse-Technology/http2_client
 
 include erlang.mk
