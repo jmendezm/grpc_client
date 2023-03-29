@@ -231,7 +231,7 @@ new_stream(Connection, Service, Rpc, Encoder, Options) ->
     %% the gpb rpc def has 'input', 'output' etc.
     %% All the information is combined in 1 map,
     %% which is is the state of the gen_server.
-    RpcDef#{stream_id => StreamId,
+    RpcDef1 = RpcDef#{stream_id => StreamId,
             package => [atom_to_list(Package),$.],
             service => Service,
             rpc => Rpc,
@@ -243,7 +243,11 @@ new_stream(Connection, Service, Rpc, Encoder, Options) ->
             headers_sent => false,
             metadata => Metadata,
             compression => Compression,
-            buffer => <<>>}.
+            buffer => <<>>},
+    DefaultHeaders = default_headers(RpcDef1),
+    AllHeaders = add_metadata(DefaultHeaders, Metadata),
+    ok = grpc_client_connection:send_headers(Connection, StreamId, AllHeaders),
+    RpcDef1.
 
 send_msg(#{stream_id := StreamId,
            connection := Connection,
