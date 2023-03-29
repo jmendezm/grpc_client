@@ -159,7 +159,9 @@ connect(Transport, Host, Port) ->
 %% is possible to select 'grpc_client_chatterbox_adapter', which
 %% implements an adapter for the chatterbox http/2 client.
 connect(Transport, Host, Port, Options) ->
-    grpc_client_connection:new(Transport, Host, Port, Options).
+  {ok,#{http_connection := ConnPid}} = Conn = grpc_client_connection:new(Transport, Host, Port, Options),
+  grpc_client_stream_queue:start(ConnPid),
+  Conn.
 
 -spec new_stream(Connection::connection(),
                  Service::atom(),
@@ -167,7 +169,8 @@ connect(Transport, Host, Port, Options) ->
                  DecoderModule::module()) -> {ok, client_stream()}.
 %% @equiv new_stream(Connection, Service, Rpc, DecoderModule, [])
 new_stream(Connection, Service, Rpc, DecoderModule) ->
-    new_stream(Connection, Service, Rpc, DecoderModule, []).
+    grpc_client_stream_queue:new_stream(Connection, Service, Rpc, DecoderModule, []).
+    %new_stream(Connection, Service, Rpc, DecoderModule, []).
 
 -spec new_stream(Connection::connection(),
                  Service::atom(),
@@ -176,7 +179,8 @@ new_stream(Connection, Service, Rpc, DecoderModule) ->
                  Options::[stream_option()]) -> {ok, client_stream()}.
 %% @doc Create a new stream to start a new RPC.
 new_stream(Connection, Service, Rpc, DecoderModule, Options) ->
-    grpc_client_stream:new(Connection, Service, Rpc, DecoderModule, Options).
+    grpc_client_stream_queue:new_stream(Connection, Service, Rpc, DecoderModule, Options).
+    %grpc_client_stream:new(Connection, Service, Rpc, DecoderModule, Options).
 
 -spec send(Stream::client_stream(), Msg::map()) -> ok.
 %% @doc Send a message from the client to the server.
