@@ -240,7 +240,7 @@ new_stream(Connection, Service, Rpc, Encoder, Options) ->
             state => idle,
             encoder => Encoder,
             connection => Connection,
-            headers_sent => false,
+            headers_sent => true,
             metadata => Metadata,
             compression => Compression,
             buffer => <<>>},
