@@ -240,14 +240,14 @@ new_stream(Connection, Service, Rpc, Encoder, Options) ->
             state => idle,
             encoder => Encoder,
             connection => Connection,
-            headers_sent => true,
+            headers_sent => false,
             metadata => Metadata,
             compression => Compression,
             buffer => <<>>},
     DefaultHeaders = default_headers(RpcDef1),
     AllHeaders = add_metadata(DefaultHeaders, Metadata),
     ok = grpc_client_connection:send_headers(Connection, StreamId, AllHeaders),
-    RpcDef1.
+    RpcDef1#{headers_sent => true}.
 
 send_msg(#{stream_id := StreamId,
            connection := Connection,
