@@ -159,9 +159,13 @@ connect(Transport, Host, Port) ->
 %% is possible to select 'grpc_client_chatterbox_adapter', which
 %% implements an adapter for the chatterbox http/2 client.
 connect(Transport, Host, Port, Options) ->
-  {ok,#{http_connection := ConnPid}} = Conn = grpc_client_connection:new(Transport, Host, Port, Options),
-  grpc_client_stream_queue:start(ConnPid),
-  Conn.
+  case grpc_client_connection:new(Transport, Host, Port, Options) of
+    {ok,#{http_connection := ConnPid}} = Conn ->
+      grpc_client_stream_queue:start(ConnPid),
+      Conn;
+    Res ->
+      Res
+  end.
 
 -spec new_stream(Connection::connection(),
                  Service::atom(),
