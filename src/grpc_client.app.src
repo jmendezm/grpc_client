@@ -4,4 +4,5 @@
   {modules,[]},
   {registered, []},
   {env, []},
+  {mod, {grpc_client_app, []}},
   {applications,[http2_client,grpc_lib]}]}.
