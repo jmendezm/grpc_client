@@ -27,5 +27,6 @@ start_link() ->
     supervisor:start_link({local, ?MODULE}, ?MODULE, []).
 
 init([]) ->
-    Procs = [],
-    {ok, {{one_for_one, 1, 5}, Procs}}.
+    StreamQueue = grpc_client_stream_queue:get_specs(),
+    Procs = [StreamQueue],
+    {ok, {{one_for_one, 1000, 1}, Procs}}.
